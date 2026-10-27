@@ -69,8 +69,6 @@ def main(argv=None):
             always_seed=cfg.always_seed,
             always_device=cfg.always_device,
         )
-        for p in sched.S[0] if False else []:
-            pass
     else:
         state = State(cfg, data, dev)
     if cfg.windowed and cfg.replica != "live":

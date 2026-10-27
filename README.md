@@ -20,6 +20,9 @@ Datasets, trained state, and result logs are not included.
 
 ## Installation
 
+Run the commands below from the repository root unless noted otherwise.
+The engine requires Linux and a CUDA-capable GPU; partition storage must support direct I/O.
+
 1. Create a Python 3.10 environment and install the dependencies:
    ```bash
    pip3 install torch==2.3.1 numpy pandas
@@ -48,7 +51,7 @@ Datasets, trained state, and result logs are not included.
      --cond C1n --replica int8 --replica_frac 1.0 --sched seq120 \
      --always_frac 0.0375 --always_sel deg --always_device cuda --state_device cuda \
      --nbr_dir split --fanout 20 --batch 4000 --nchunks 40 --eval_queries 100000 \
-     --epochs 10 --seed 0 --state_root /path/to/state --out results/fb86m.json
+     --epochs 10 --seed 0 --counters false --state_root /path/to/state --out results/fb86m.json
    ```
    Use `--dataset wkg90m --sched seq130 --always_frac 0.0625` for WikiKG90Mv2.
 
@@ -56,7 +59,7 @@ Datasets, trained state, and result logs are not included.
    - `--replica fp32` keeps the read view in FP32.
    - `--state_device cpu` moves the read view to the host; `--always_device cpu` moves the resident set.
    - `--always_frac 0` removes the resident set.
-   - `--cond B --replica live` restricts neighbor reads to the window (partition-buffer behavior).
+   - `--cond B --replica live --always_frac 0` restricts neighbor reads to the window (partition-buffer behavior).
    - `--counters true` records access counts for diagnostics; keep it off for timing runs.
 
 4. **Output**:
@@ -65,8 +68,17 @@ Datasets, trained state, and result logs are not included.
 
 ## Tests
 
+From the repository root, the read-view test runs without graph data:
+
 ```bash
-cd tests
-python3 test_models.py
-python3 test_replica_fp32.py
+python3 tests/test_replica_fp32.py
 ```
+
+Most integration tests expect a prepared ogbl-collab dataset in
+`$FOVEA_DATA/collab_buf`, which the large-graph conversion scripts do not create.
+
+## Baselines
+
+The DGL launcher is in `baselines/dgl`. The MariusGNN launcher requires a separate
+Marius installation and a dataset-specific YAML configuration passed as its first
+argument. The Marius source tree and configurations are not included in this package.

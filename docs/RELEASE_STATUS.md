@@ -1,6 +1,10 @@
-# Status
+# Release Notes
 
-This directory is an anonymized source snapshot of the engine, tests, baselines, and tools
-used in the paper. Comments and docstrings were removed and the code was reformatted.
-Dataset paths are taken from the `FOVEA_DATA` environment variable. Datasets, trained
-state, result logs, and the Marius fork are not included.
+This package contains the Fovea training engine, tests, dataset conversion scripts,
+measurement tools, and baseline launchers used in the paper.
+
+Dataset paths are configured through `FOVEA_DATA`. Datasets, trained state,
+experiment logs, and the external Marius source tree are not included.
+
+The engine uses Linux, PyTorch, and CUDA. Partitioned training uses direct I/O
+and pinned host memory.

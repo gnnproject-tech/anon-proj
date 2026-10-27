@@ -10,7 +10,7 @@ t0 = time.time()
 
 def find(name):
     m = glob.glob(f"{SRC}/**/{name}", recursive=True)
-    assert m, f"{name} not found; check ziplist.txt"
+    assert m, f"{name} not found under {SRC}; extract the WikiKG90Mv2 files there"
     return m[0]
 
 

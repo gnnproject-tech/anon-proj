@@ -203,6 +203,7 @@ class PagedState:
         s = self.slot_of[p]
         r = torch.where(s >= 0, s * self.PSZ + (idx - p * self.PSZ), torch.full_like(idx, -1))
         if self.kS:
+            # S remains authoritative when a node also has a window slot.
             sr = self.srow[idx].long()
             r = torch.where(sr >= 0, self.S_OFF + sr, r)
         return r
@@ -290,6 +291,7 @@ class PagedState:
                 try:
                     for p, s in items:
                         self.store.store(p, E[s * PSZ : (s + 1) * PSZ], O[s * PSZ : (s + 1) * PSZ])
+                        # Reuse the slot only after writeback completes.
                         self.sstate[s] = 0
                 except BaseException as ex:
                     self.wb_error = ex
@@ -673,6 +675,7 @@ class PagedState:
             return
         r = torch.cat(rows)
         v = torch.cat(grads)
+        # Combine all occurrences before the per-node Adagrad update.
         u, inv = torch.unique(r, return_inverse=True)
         acc = torch.zeros(len(u), self.d, device=self.dev)
         acc.index_add_(0, inv, v)

@@ -49,6 +49,7 @@ class Model:
         row = torch.arange(m, device=feats.device).repeat_interleave(K)
         col = inv[m:]
         keep = valid[row]
+        # Coalescing preserves repeated samples by summing their weights.
         A = torch.sparse_coo_tensor(
             torch.stack([row, col]), keep.to(feats.dtype) / K, (m, feats.shape[0])
         ).coalesce()
